@@ -173,12 +173,18 @@ class CD_APD_Core
 			}
 
 			ob_start();
+			$_wp_plugin_file = $plugin;
 			include_once( $valid );
+			$plugin = $_wp_plugin_file; // Avoid stomping of the $plugin variable in a plugin.
 
 			if ( ! $silent )
 			{
 				do_action( 'custom_activate_plugin', $plugin, $context );
 				do_action( "custom_activate_{$plugin}", $context );
+
+				$action_slug = str_replace( trailingslashit( WP_PLUGIN_DIR ), '', $valid );
+				do_action( 'activate_plugin', $action_slug, $context );
+				do_action( "activate_{$action_slug}", $context );
 			}
 
 			$current[] = $plugin;
@@ -230,6 +236,10 @@ class CD_APD_Core
 			{
 				do_action( "custom_deactivate_{$plugin}", $context );
 				do_action( 'custom_deactivated_plugin', $plugin, $context );
+
+				$action_slug = str_replace( trailingslashit( WP_PLUGIN_DIR ), '', $valid );
+				do_action( 'deactivated_plugin', $action_slug, $context );
+				do_action( "deactivated_{$action_slug}", $context );
 			}
 		}
 
